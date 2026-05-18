@@ -67,6 +67,16 @@ li { margin-bottom: 6px; max-width: 720px; }
 .nav-cta { font-family: var(--mono); font-size: 12px; letter-spacing: 0.10em; text-transform: uppercase; text-decoration: none; padding: 9px 16px; border: 1px solid var(--ink); color: var(--ink); }
 .nav-cta:hover { background: var(--ink); color: var(--bg); }
 
+/* bridge bar to /welcome — subtle nav-crumb, content-claude's verbatim line */
+.bridge-bar { background: var(--bg); border-bottom: 1px solid var(--rule); }
+.bridge-bar-inner { max-width: 1280px; margin: 0 auto; padding: 10px 64px; font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+.bridge-bar a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 1px; }
+.bridge-bar a:hover { border-bottom-color: var(--critical); }
+.bridge-bar .arrow { color: var(--critical); font-weight: 700; margin-left: 4px; }
+@media (max-width: 900px) {
+  .bridge-bar-inner { padding-left: 24px; padding-right: 24px; font-size: 11px; }
+}
+
 /* layout */
 .wrap { max-width: 1280px; margin: 0 auto; padding: 0 64px; }
 section { padding: 96px 0; border-top: 1px solid var(--rule); }
@@ -200,6 +210,13 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
     <a href="https://github.com/&lt;handle&gt;/vibe-code-audits" class="nav-cta">View on GitHub &rarr;</a>
   </div>
 </nav>
+
+<!-- bridge to /welcome — content-claude's verbatim line, subtle nav-crumb position -->
+<div class="bridge-bar">
+  <div class="bridge-bar-inner">
+    First time on the repo? The <a href="welcome.html">/welcome page</a> is the why before this is the what.<span class="arrow">&rarr;</span>
+  </div>
+</div>
 
 <div class="wrap" id="top">
 

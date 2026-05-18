@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Welcome &mdash; Vibe-Code Audits</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="A gateway to the vibe-code audit project. If you've shipped an app built by an AI tool and aren't sure what to audit first, start here." />
+<meta property="og:title" content="A gentler entry point to the vibe-code audit project." />
+<meta property="og:description" content="If you've shipped an app built by Lovable, v0, Cursor, or Bolt.new and aren't sure what to audit first, start here." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://nftyoginis.github.io/vibe-code-audits/welcome.html" />
+<meta property="og:image" content="https://nftyoginis.github.io/vibe-code-audits/og-image.png" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" content="A gentler entry point to the vibe-code audit project." />
+<meta property="twitter:description" content="If you've shipped an app built by Lovable, v0, Cursor, or Bolt.new and aren't sure what to audit first, start here." />
+<meta property="twitter:image" content="https://nftyoginis.github.io/vibe-code-audits/og-image.png" />
+<style>
+/* =================================================================
+   /welcome  ·  the layman gateway
+   Visual identity: Postmortem cousin · aged bronze + editorial serif
+   Lock 2026-05-18 · designed to bridge into docs/index.html (hub)
+   ================================================================= */
+:root {
+  --bg:        #f4f2ec;
+  --ink:       #0f1b2d;
+  --muted:     #6a5d4a;
+  --muted-cool:#5b6878;
+  --rule:      #d6d2c4;
+  --rule-warm: #c9bfa5;
+  --accent:    #9c6f3e;
+  --accent-deep: #7d5430;
+  --highlight: #f7eee0;
+  --code-bg:   #1b1814;
+  --code-ink:  #ece4d4;
+  --code-muted:#a59882;
+  --serif:     Georgia, 'Iowan Old Style', 'Apple Garamond', Cambria, serif;
+  --mono:      ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--serif); font-size: 19px; line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
+}
+a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+a:hover { color: var(--accent-deep); text-decoration-color: var(--accent-deep); }
+
+/* nav strip — minimal, bridges to the hub */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(244,242,236,0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-inner {
+  max-width: 1180px; margin: 0 auto;
+  padding: 20px 56px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.nav-brand {
+  font-family: var(--mono); font-weight: 700; font-size: 14px; letter-spacing: 0.04em; text-decoration: none;
+  color: var(--ink);
+}
+.nav-brand .slash { color: var(--accent); }
+.nav-brand .crumb { color: var(--muted); font-weight: 400; margin-left: 8px; }
+.nav-cta {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 9px 16px;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+}
+.nav-cta:hover { background: var(--ink); color: var(--bg); }
+
+/* layout */
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 56px; }
+.wrap-narrow { max-width: 760px; margin: 0 auto; padding: 0 56px; }
+
+section { padding: 96px 0; }
+section + section { border-top: 1px solid var(--rule); }
+
+.kicker {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 28px;
+  display: inline-block;
+}
+.kicker .num { color: var(--accent); font-weight: 700; margin-right: 4px; }
+.kicker .bar { color: var(--rule-warm); margin: 0 8px; }
+
+h1, h2, h3 { font-family: var(--serif); font-weight: 700; color: var(--ink); }
+h1 { font-size: 84px; line-height: 1.04; letter-spacing: -0.012em; font-weight: 700; }
+h2 { font-size: 44px; line-height: 1.12; letter-spacing: -0.008em; font-weight: 700; margin-bottom: 20px; }
+h3 { font-size: 26px; line-height: 1.2; font-weight: 600; margin-bottom: 8px; }
+
+p { max-width: 660px; }
+p + p { margin-top: 18px; }
+em { font-style: italic; color: var(--ink); }
+strong { font-weight: 600; color: var(--ink); }
+
+/* =================================================================
+   HERO  ·  asymmetric, generous, magazine-cover
+   ================================================================= */
+.hero {
+  padding: 96px 0 80px;
+  position: relative;
+}
+.hero-row {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 80px;
+  align-items: end;
+}
+.hero-text { position: relative; }
+.hero-text .col-markers {
+  position: absolute; top: -16px; bottom: -16px; left: -16px; right: -16px;
+  pointer-events: none;
+}
+.hero-text .col-markers span {
+  position: absolute; top: 0; bottom: 0; width: 1px;
+  background: var(--rule); opacity: 0.5;
+}
+.hero h1 { max-width: 680px; }
+.hero h1 .accent { color: var(--accent); font-style: italic; }
+.hero h1 .accent-noital { color: var(--accent); }
+.hero .standfirst {
+  font-size: 24px;
+  line-height: 1.55;
+  color: var(--muted-cool);
+  max-width: 600px;
+  margin-top: 32px;
+  font-style: italic;
+}
+.hero-illu {
+  width: 100%; max-width: 540px;
+  margin-left: auto;
+}
+.hero-illu svg { display: block; width: 100%; height: auto; }
+.hero-illu .illu-caption {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  text-align: right;
+}
+
+/* =================================================================
+   WHO THIS IS FOR  ·  single column, prose with italic leads
+   ================================================================= */
+.audience {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 64px;
+}
+.audience .lede { font-family: var(--serif); font-size: 22px; line-height: 1.5; color: var(--muted-cool); font-style: italic; padding-top: 60px; }
+.audience .body p {
+  font-size: 19px;
+  line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 620px;
+}
+.audience .body p:last-child { margin-bottom: 0; }
+.audience .body p strong { color: var(--accent-deep); }
+.audience .body p .italic-lead {
+  font-style: italic;
+  color: var(--ink);
+}
+
+/* =================================================================
+   WHAT YOU'LL FIND  ·  prose + inline stat callouts
+   ================================================================= */
+.findbody {
+  font-size: 20px;
+  line-height: 1.7;
+  max-width: 720px;
+  color: var(--ink);
+}
+.findbody p { margin-bottom: 24px; max-width: 720px; }
+.findbody p:last-child { margin-bottom: 0; }
+
+/* stat callout — "carry-text-during-empty-state" */
+.stat {
+  margin: 40px 0;
+  padding: 32px 36px;
+  background: var(--highlight);
+  border-left: 4px solid var(--accent);
+  max-width: 720px;
+}
+.stat-num {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 72px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--accent-deep);
+  margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.stat-num.empty { color: var(--rule-warm); }
+.stat-body {
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 580px;
+  margin-bottom: 12px;
+}
+.stat-attribution {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.stat-attribution.todo { color: var(--accent-deep); }
+.stat-attribution.todo::before {
+  content: "▸ TODO ";
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+/* stacks band — reused icons */
+.stacks-band {
+  margin-top: 56px;
+  padding-top: 36px;
+  border-top: 1px solid var(--rule);
+}
+.stacks-band-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.stacks-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+.stacks-row .cell {
+  background: var(--bg);
+  padding: 28px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+.stacks-row .cell .name {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.stacks-row .cell .tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.stacks-row .cell.live .tag { color: var(--accent-deep); font-weight: 700; }
+.stacks-row .cell .underline {
+  width: 100%;
+  height: 1px;
+  background: var(--rule);
+}
+.stacks-row .cell.live .underline { background: var(--accent); height: 2px; }
+
+/* =================================================================
+   GATEWAY CTA  ·  THE visual anchor
+   ================================================================= */
+.gateway {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: var(--highlight);
+}
+.gateway-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 120px 56px;
+  position: relative;
+}
+.gateway-inner::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 56px; right: 56px;
+  height: 4px;
+  background: var(--accent);
+}
+.gateway .kicker { color: var(--accent-deep); }
+.gateway .kicker .num { color: var(--accent); }
+.gateway h2 {
+  font-size: 64px;
+  line-height: 1.08;
+  letter-spacing: -0.014em;
+  max-width: 880px;
+  margin-bottom: 32px;
+}
+.gateway h2 .accent { color: var(--accent); font-style: italic; }
+.gateway .gateway-stand {
+  font-size: 22px;
+  line-height: 1.55;
+  color: var(--muted-cool);
+  max-width: 680px;
+  font-style: italic;
+  margin-bottom: 48px;
+}
+.gateway-ctas {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.gateway-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 22px 36px;
+  text-decoration: none;
+  border: 2px solid var(--accent);
+}
+.gateway-btn:hover { background: var(--accent-deep); border-color: var(--accent-deep); color: var(--bg); text-decoration: none; }
+.gateway-btn .arrow { font-size: 20px; }
+.gateway-secondary {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-style: italic;
+  color: var(--muted-cool);
+  text-decoration-color: var(--rule-warm);
+}
+.gateway-secondary:hover { color: var(--ink); }
+
+/* =================================================================
+   HOW WE AUDIT  ·  illustration above, prose below
+   ================================================================= */
+.method-illu {
+  margin: 32px 0 48px;
+  max-width: 1080px;
+}
+.method-illu svg { display: block; width: 100%; height: auto; }
+.method-prose p {
+  font-size: 19px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  max-width: 720px;
+}
+.method-prose p:last-child { margin-bottom: 0; }
+.method-prose .step-lead {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  font-weight: 700;
+  margin-right: 12px;
+}
+
+/* =================================================================
+   WHAT WE'VE FOUND SO FAR  ·  stat-led, gracefully empty
+   ================================================================= */
+.found-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.found-grid .prose p {
+  font-size: 19px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  max-width: 580px;
+}
+.found-grid .prose p:last-child { margin-bottom: 0; }
+.found-grid .prose em { color: var(--accent-deep); }
+.found-grid .col-stats { display: flex; flex-direction: column; gap: 24px; }
+
+/* =================================================================
+   FOOTER  ·  minimal
+   ================================================================= */
+.site-foot {
+  border-top: 1px solid var(--rule);
+  padding: 56px 0 72px;
+}
+.foot-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.foot-brand {
+  font-family: var(--mono); font-weight: 700; font-size: 14px; letter-spacing: 0.04em;
+}
+.foot-brand .slash { color: var(--accent); }
+.foot-tag {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  margin-top: 8px;
+}
+.foot-links {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--muted);
+  display: flex; gap: 28px;
+}
+.foot-links a { color: var(--muted); text-decoration-color: var(--rule-warm); }
+.foot-links a:hover { color: var(--accent-deep); }
+
+/* =================================================================
+   RESPONSIVE
+   ================================================================= */
+@media (max-width: 980px) {
+  .wrap, .wrap-narrow, .nav-inner, .gateway-inner { padding-left: 28px; padding-right: 28px; }
+  .gateway-inner::before { left: 28px; right: 28px; }
+  h1 { font-size: 52px; }
+  h2 { font-size: 32px; }
+  .hero-row, .audience, .found-grid { grid-template-columns: 1fr; gap: 40px; }
+  .audience .lede { padding-top: 0; font-size: 19px; }
+  .hero-illu { max-width: 100%; margin: 32px 0 0; }
+  .hero .standfirst { font-size: 19px; }
+  .gateway h2 { font-size: 38px; }
+  .gateway-inner { padding: 72px 28px; }
+  .stat-num { font-size: 56px; }
+  .stacks-row { grid-template-columns: 1fr 1fr; }
+  .stacks-row .cell:nth-child(5) { grid-column: 1 / -1; }
+  section { padding: 64px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- =====================================================
+     NAV STRIP · light, bridges back to the hub
+     ===================================================== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="slash">/</span>vibe-code-audits<span class="crumb">&middot; welcome</span>
+    </a>
+    <a href="index.html" class="nav-cta">Open the hub →</a>
+  </div>
+</nav>
+
+<!-- =====================================================
+     HERO · asymmetric, generous, headline-first
+     ===================================================== -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-row">
+      <div class="hero-text">
+        <div class="col-markers">
+          <span style="left: 0%;"></span>
+          <span style="left: 25%;"></span>
+          <span style="left: 55%;"></span>
+          <span style="left: 95%;"></span>
+        </div>
+        <div class="kicker"><span class="num">00</span><span class="bar">──</span> A GENTLER ENTRY POINT</div>
+        <h1>Your app was built by an AI that didn't really know what it <span class="accent">was doing</span>.</h1>
+        <p class="standfirst">If you've shipped something built by Lovable, v0, Cursor, Bolt.new, or Replit Agent, this is for you. Even if you've never opened a terminal in your life.</p>
+      </div>
+
+      <div class="hero-illu">
+        <!-- inline hero illustration · facade & foundation -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="An editorial line drawing: a clean building facade above ground; below the ground line, exposed pipes, cracks, and missing supports rendered in bronze accent.">
+          <defs>
+            <style>
+              .ink       { stroke: #0f1b2d; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+              .ink-thin  { stroke-width: 0.6; }
+              .ink-reg   { stroke-width: 1.25; }
+              .ink-bold  { stroke-width: 1.9; }
+              .ink-fill  { fill: #0f1b2d; stroke: none; }
+              .br    { stroke: #9c6f3e; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+              .br-reg{ stroke-width: 1.6; }
+              .br-bold{ stroke-width: 2.3; }
+              .br-fill{ fill: #9c6f3e; stroke: none; }
+              .dash { stroke-dasharray: 4 4; }
+              .ilabel { font-family: 'IBM Plex Mono', monospace; fill: #5b6878; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; }
+              .ilabel-ink { fill: #0f1b2d; }
+              .ilabel-br { fill: #9c6f3e; }
+            </style>
+          </defs>
+          <rect width="800" height="600" fill="#f4f2ec"/>
+
+          <!-- guide columns -->
+          <line x1="120" y1="40" x2="120" y2="560" class="ink ink-thin" opacity="0.25"/>
+          <line x1="680" y1="40" x2="680" y2="560" class="ink ink-thin" opacity="0.25"/>
+
+          <!-- facade -->
+          <polyline points="170,135 400,80 630,135" class="ink ink-reg"/>
+          <rect x="170" y="135" width="460" height="225" class="ink ink-bold"/>
+          <line x1="170" y1="210" x2="630" y2="210" class="ink ink-thin"/>
+          <line x1="170" y1="285" x2="630" y2="285" class="ink ink-thin"/>
+          <line x1="285" y1="135" x2="285" y2="360" class="ink ink-thin"/>
+          <line x1="400" y1="135" x2="400" y2="360" class="ink ink-thin"/>
+          <line x1="515" y1="135" x2="515" y2="360" class="ink ink-thin"/>
+
+          <!-- windows: 4×3 grid -->
+          <g class="ink ink-reg">
+            <rect x="195" y="152" width="65" height="42"/>
+            <rect x="310" y="152" width="65" height="42"/>
+            <rect x="425" y="152" width="65" height="42"/>
+            <rect x="540" y="152" width="65" height="42"/>
+            <rect x="195" y="227" width="65" height="42"/>
+            <rect x="310" y="227" width="65" height="42"/>
+            <rect x="425" y="227" width="65" height="42"/>
+            <rect x="540" y="227" width="65" height="42"/>
+            <rect x="195" y="302" width="65" height="42"/>
+            <rect x="540" y="302" width="65" height="42"/>
+          </g>
+          <g class="ink ink-thin">
+            <line x1="195" y1="173" x2="260" y2="173"/><line x1="310" y1="173" x2="375" y2="173"/>
+            <line x1="425" y1="173" x2="490" y2="173"/><line x1="540" y1="173" x2="605" y2="173"/>
+            <line x1="227.5" y1="152" x2="227.5" y2="194"/><line x1="342.5" y1="152" x2="342.5" y2="194"/>
+            <line x1="457.5" y1="152" x2="457.5" y2="194"/><line x1="572.5" y1="152" x2="572.5" y2="194"/>
+            <line x1="195" y1="248" x2="260" y2="248"/><line x1="310" y1="248" x2="375" y2="248"/>
+            <line x1="425" y1="248" x2="490" y2="248"/><line x1="540" y1="248" x2="605" y2="248"/>
+            <line x1="227.5" y1="227" x2="227.5" y2="269"/><line x1="342.5" y1="227" x2="342.5" y2="269"/>
+            <line x1="457.5" y1="227" x2="457.5" y2="269"/><line x1="572.5" y1="227" x2="572.5" y2="269"/>
+            <line x1="227.5" y1="302" x2="227.5" y2="344"/><line x1="195" y1="323" x2="260" y2="323"/>
+            <line x1="572.5" y1="302" x2="572.5" y2="344"/><line x1="540" y1="323" x2="605" y2="323"/>
+          </g>
+
+          <!-- door (center, row 3) -->
+          <rect x="370" y="290" width="60" height="70" class="ink ink-bold"/>
+          <circle cx="420" cy="325" r="1.5" class="ink-fill"/>
+
+          <text x="170" y="118" class="ilabel ilabel-ink">FRONT ELEVATION &#8212; CLEAN</text>
+
+          <!-- ground line -->
+          <line x1="80" y1="375" x2="720" y2="375" class="ink ink-bold"/>
+          <g class="ink ink-thin">
+            <line x1="100" y1="375" x2="110" y2="385"/><line x1="140" y1="375" x2="150" y2="385"/>
+            <line x1="180" y1="375" x2="190" y2="385"/><line x1="220" y1="375" x2="230" y2="385"/>
+            <line x1="260" y1="375" x2="270" y2="385"/><line x1="300" y1="375" x2="310" y2="385"/>
+            <line x1="340" y1="375" x2="350" y2="385"/><line x1="380" y1="375" x2="390" y2="385"/>
+            <line x1="420" y1="375" x2="430" y2="385"/><line x1="460" y1="375" x2="470" y2="385"/>
+            <line x1="500" y1="375" x2="510" y2="385"/><line x1="540" y1="375" x2="550" y2="385"/>
+            <line x1="580" y1="375" x2="590" y2="385"/><line x1="620" y1="375" x2="630" y2="385"/>
+            <line x1="660" y1="375" x2="670" y2="385"/><line x1="700" y1="375" x2="710" y2="385"/>
+          </g>
+
+          <!-- below ground: foundation -->
+          <rect x="170" y="375" width="460" height="180" class="ink ink-thin" style="stroke-dasharray: 5 3;"/>
+          <line x1="225" y1="375" x2="225" y2="555" class="ink ink-reg"/>
+          <line x1="385" y1="375" x2="385" y2="555" class="ink ink-reg"/>
+          <line x1="575" y1="375" x2="575" y2="555" class="ink ink-reg"/>
+          <line x1="480" y1="375" x2="480" y2="555" class="br br-reg dash"/>
+          <text x="496" y="468" class="ilabel ilabel-br">MISSING</text>
+
+          <!-- joists -->
+          <line x1="170" y1="415" x2="395" y2="415" class="ink ink-reg"/>
+          <line x1="405" y1="415" x2="465" y2="415" class="br br-reg"/>
+          <line x1="500" y1="415" x2="570" y2="415" class="br br-reg"/>
+          <polyline points="465,415 470,409 476,418 484,410 492,418 498,414" class="br br-reg"/>
+          <line x1="170" y1="465" x2="630" y2="465" class="ink ink-reg"/>
+          <line x1="170" y1="515" x2="350" y2="515" class="ink ink-reg"/>
+          <line x1="360" y1="515" x2="420" y2="515" class="br br-reg"/>
+          <line x1="445" y1="515" x2="630" y2="515" class="ink ink-reg"/>
+
+          <!-- pipes -->
+          <path d="M 200 432 Q 260 432, 290 448 T 360 448 Q 410 448, 440 432 T 510 432" class="br br-bold"/>
+          <circle cx="290" cy="448" r="3" class="br-fill"/>
+          <circle cx="360" cy="448" r="3" class="br-fill"/>
+          <circle cx="440" cy="432" r="3" class="br-fill"/>
+          <path d="M 240 540 Q 290 532, 340 540 Q 400 548, 460 532 Q 520 524, 580 532" class="br br-bold"/>
+          <circle cx="340" cy="540" r="3" class="br-fill"/>
+          <circle cx="460" cy="532" r="3" class="br-fill"/>
+
+          <!-- cracks -->
+          <polyline points="465,395 472,403 478,397 484,406 490,402" class="br br-reg"/>
+          <polyline points="478,440 484,448 490,442 498,452" class="br br-reg"/>
+          <polyline points="466,488 472,496 478,490 484,498 490,494" class="br br-reg"/>
+
+          <!-- X marks -->
+          <g transform="translate(307,415)"><line x1="-4" y1="-4" x2="4" y2="4" class="br br-bold"/><line x1="4" y1="-4" x2="-4" y2="4" class="br br-bold"/></g>
+          <g transform="translate(395,515)"><line x1="-4" y1="-4" x2="4" y2="4" class="br br-bold"/><line x1="4" y1="-4" x2="-4" y2="4" class="br br-bold"/></g>
+
+          <text x="170" y="582" class="ilabel ilabel-ink">SECTION CUT &#8212; WHAT'S UNDERNEATH</text>
+
+          <!-- depth scale -->
+          <line x1="660" y1="375" x2="660" y2="555" class="ink ink-thin"/>
+          <line x1="655" y1="375" x2="665" y2="375" class="ink ink-thin"/>
+          <line x1="655" y1="465" x2="665" y2="465" class="ink ink-thin"/>
+          <line x1="655" y1="555" x2="665" y2="555" class="ink ink-thin"/>
+          <text x="672" y="380" class="ilabel">0</text>
+          <text x="672" y="470" class="ilabel">.5</text>
+          <text x="672" y="560" class="ilabel">1.0</text>
+        </svg>
+
+        <div class="illu-caption">Section cut &middot; the part vibe-coding tools don't show you</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     WHO THIS IS FOR · single-column prose, italic leads
+     ===================================================== -->
+<section>
+  <div class="wrap">
+    <div class="audience">
+      <div class="lede">
+        Three audiences walked in. This page is written for one of them.
+      </div>
+      <div class="body">
+        <div class="kicker"><span class="num">01</span><span class="bar">──</span> WHO THIS IS FOR</div>
+        <h2>If you've shipped an app and you're not sure what to audit first.</h2>
+        <p><span class="italic-lead">If you used a vibe-coding tool</span> &mdash; Lovable, v0, Cursor, Bolt.new, Replit Agent &mdash; and your app is live, this is for you. You don't need to be technical. You need to know which kinds of problems get shipped by default in your tool's scaffold, and which two or three matter most.</p>
+        <p><span class="italic-lead">If you've ever wondered</span> whether the speed of these tools comes at a cost, the answer is yes, and the cost is specific. It's not "AI-generated code is bad." It's that each tool has a few defaults that quietly ship broken in 70 percent of apps, and those defaults are knowable. <strong>This project names them.</strong></p>
+        <p><span class="italic-lead">If you're a non-technical founder</span> who hired someone to vibe-code your MVP, you need to know what to ask them about. Send them the hub. Ask them to run one verify command per finding. If they can, you're fine. If they can't, that's its own kind of answer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     WHAT YOU'LL FIND · prose + stat callout + stacks band
+     ===================================================== -->
+<section>
+  <div class="wrap-narrow">
+    <div class="kicker"><span class="num">02</span><span class="bar">──</span> WHAT YOU'LL FIND HERE</div>
+    <h2>One audit per tool. Every finding has a patch.</h2>
+    <div class="findbody">
+      <p>The project is a public, growing library of audits &mdash; one per AI coding tool. Each audit takes a real app generated by that tool, opens it up, lists every problem it found shipping by default, and pairs each problem with the patch that fixes it and the one command you can run to confirm the fix worked.</p>
+
+      <p>The audits don't lecture about vulnerability categories. They name the <em>specific</em> mistakes <em>specific</em> tools make. Generic AI-security advice doesn't tell you where to look first. Named-tool patterns do.</p>
+
+      <!-- STAT CALLOUT · third-party-sourced anchor stat; carries during empty-state -->
+      <div class="stat">
+        <div class="stat-num">70%</div>
+        <div class="stat-body">of audited Lovable apps ship with their database security disabled by default, according to one third-party scan of public Lovable scaffolds.</div>
+        <div class="stat-attribution">Beesoul published audit reports &middot; third-party scan</div>
+      </div>
+
+      <p>That's one well-attested pattern from one tool. The hub's pattern files name failure-mode patterns for each of the five named stacks; pattern claims fill in as audits accumulate &mdash; a pattern entry requires N=3+ independent teardowns of that stack confirming the same shape. Every patch ships MIT-licensed. Use it.</p>
+    </div>
+
+    <div class="stacks-band">
+      <div class="stacks-band-label">▸ Stacks we audit</div>
+      <div class="stacks-row">
+        <div class="cell">
+          <img src="icons/stack-lovable-256.svg" width="56" height="56" alt="Lovable wordmark in monospace" />
+          <span class="name">lovable</span>
+          <span class="underline"></span>
+          <span class="tag">awaits first teardown</span>
+        </div>
+        <div class="cell">
+          <img src="icons/stack-v0-256.svg" width="56" height="56" alt="v0 wordmark in monospace" />
+          <span class="name">v0</span>
+          <span class="underline"></span>
+          <span class="tag">scheduled</span>
+        </div>
+        <div class="cell">
+          <img src="icons/stack-bolt-new-256.svg" width="56" height="56" alt="Bolt.new wordmark in monospace" />
+          <span class="name">bolt.new</span>
+          <span class="underline"></span>
+          <span class="tag">scheduled</span>
+        </div>
+        <div class="cell">
+          <img src="icons/stack-cursor-256.svg" width="56" height="56" alt="Cursor wordmark in monospace" />
+          <span class="name">cursor</span>
+          <span class="underline"></span>
+          <span class="tag">scheduled</span>
+        </div>
+        <div class="cell">
+          <img src="icons/stack-replit-agent-256.svg" width="56" height="56" alt="Replit Agent wordmark in monospace" />
+          <span class="name">replit/agent</span>
+          <span class="underline"></span>
+          <span class="tag">scheduled</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     GATEWAY CTA  ·  the visual anchor
+     ===================================================== -->
+<section class="gateway">
+  <div class="gateway-inner">
+    <div class="kicker"><span class="num">03</span><span class="bar">──</span> THE GATEWAY</div>
+    <h2>The hub is where the <span class="accent">substance</span> lives.</h2>
+    <p class="gateway-stand">This page is the slow path in. The hub is denser, more cited, more technical. If you're ready, that's where the actual findings are &mdash; every patch, every verify command, every named pattern.</p>
+    <div class="gateway-ctas">
+      <a href="index.html" class="gateway-btn">Open the hub <span class="arrow">→</span></a>
+      <a href="#methodology" class="gateway-secondary">or read on, for the layman methodology &mdash;</a>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     HOW WE AUDIT  ·  illustration + prose
+     ===================================================== -->
+<section id="methodology">
+  <div class="wrap">
+    <div class="kicker"><span class="num">04</span><span class="bar">──</span> HOW WE AUDIT, IN PLAIN ENGLISH</div>
+    <h2>Three movements, in plain English.</h2>
+    <p class="findbody" style="max-width: 760px;">The hub documents the six-step audit protocol in full. Here's the same protocol rendered as three movements, no jargon required.</p>
+
+    <div class="method-illu">
+      <!-- inline methodology 3-frame illustration -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" role="img" aria-label="Three editorial line-art frames: a blueprint with bronze stamp; a magnifying glass over a building cross-section revealing a crack; a clipboard punch list with bronze checkmarks.">
+        <defs>
+          <style>
+            .mink   { stroke: #0f1b2d; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+            .mink-thin { stroke-width: 0.6; }
+            .mink-reg  { stroke-width: 1.25; }
+            .mink-bold { stroke-width: 1.9; }
+            .mink-fill { fill: #0f1b2d; stroke: none; }
+            .mbr   { stroke: #9c6f3e; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+            .mbr-reg { stroke-width: 1.6; }
+            .mbr-bold{ stroke-width: 2.2; }
+            .mbr-fill{ fill: #9c6f3e; stroke: none; }
+            .mlabel{ font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; fill: #0f1b2d; }
+            .mlabel-br { fill: #9c6f3e; }
+          </style>
+        </defs>
+        <rect width="900" height="320" fill="#f4f2ec"/>
+
+        <!-- frame 01 · blueprint -->
+        <g transform="translate(20, 20)">
+          <rect x="0" y="0" width="270" height="240" class="mink mink-thin"/>
+          <g transform="translate(135, 110) rotate(-3)">
+            <rect x="-95" y="-72" width="190" height="144" class="mink mink-reg" fill="#fbfaf4"/>
+            <g class="mink mink-thin" opacity="0.35">
+              <line x1="-95" y1="-48" x2="95" y2="-48"/><line x1="-95" y1="-24" x2="95" y2="-24"/>
+              <line x1="-95" y1="0" x2="95" y2="0"/><line x1="-95" y1="24" x2="95" y2="24"/>
+              <line x1="-95" y1="48" x2="95" y2="48"/><line x1="-66" y1="-72" x2="-66" y2="72"/>
+              <line x1="-32" y1="-72" x2="-32" y2="72"/><line x1="0" y1="-72" x2="0" y2="72"/>
+              <line x1="32" y1="-72" x2="32" y2="72"/><line x1="66" y1="-72" x2="66" y2="72"/>
+            </g>
+            <rect x="-60" y="-40" width="120" height="60" class="mink mink-bold"/>
+            <line x1="-10" y1="-40" x2="-10" y2="20" class="mink mink-reg"/>
+            <path d="M -10 0 A 14 14 0 0 0 4 -14" class="mink mink-thin"/>
+            <line x1="-60" y1="-52" x2="60" y2="-52" class="mink mink-thin"/>
+            <line x1="-60" y1="-55" x2="-60" y2="-49" class="mink mink-thin"/>
+            <line x1="60" y1="-55" x2="60" y2="-49" class="mink mink-thin"/>
+            <circle cx="58" cy="46" r="14" class="mbr mbr-reg"/>
+            <circle cx="58" cy="46" r="10" class="mbr mbr-reg"/>
+            <text x="58" y="49" text-anchor="middle" class="mlabel mlabel-br" style="font-size: 8px; letter-spacing: 0.08em;">A-01</text>
+          </g>
+          <text x="14" y="225" class="mlabel">01 &#9472;&#9472; BLUEPRINT</text>
+        </g>
+
+        <!-- frame 02 · inspection -->
+        <g transform="translate(315, 20)">
+          <rect x="0" y="0" width="270" height="240" class="mink mink-thin"/>
+          <g transform="translate(80, 80)">
+            <polyline points="-50,-30 0,-58 50,-30" class="mink mink-reg"/>
+            <rect x="-50" y="-30" width="100" height="70" class="mink mink-bold"/>
+            <rect x="-40" y="-22" width="16" height="12" class="mink mink-thin"/>
+            <rect x="-12" y="-22" width="16" height="12" class="mink mink-thin"/>
+            <rect x="20" y="-22" width="16" height="12" class="mink mink-thin"/>
+            <rect x="-40" y="-2" width="16" height="12" class="mink mink-thin"/>
+            <rect x="20" y="-2" width="16" height="12" class="mink mink-thin"/>
+            <rect x="-8" y="18" width="16" height="22" class="mink mink-reg"/>
+            <line x1="-65" y1="42" x2="65" y2="42" class="mink mink-reg"/>
+            <rect x="-50" y="42" width="100" height="40" class="mink mink-thin" style="stroke-dasharray: 3 2;"/>
+            <line x1="-25" y1="42" x2="-25" y2="82" class="mink mink-thin"/>
+            <line x1="0" y1="42" x2="0" y2="82" class="mink mink-thin"/>
+            <line x1="25" y1="42" x2="25" y2="82" class="mink mink-thin"/>
+            <path d="M -45 60 Q -20 58, 10 62 T 45 62" class="mbr mbr-reg"/>
+          </g>
+          <g transform="translate(170, 130)">
+            <circle cx="0" cy="0" r="42" class="mink mink-bold" fill="#f4f2ec" fill-opacity="0.92"/>
+            <circle cx="0" cy="0" r="36" class="mink mink-thin"/>
+            <line x1="29" y1="29" x2="58" y2="58" class="mink mink-bold"/>
+            <line x1="55" y1="55" x2="64" y2="64" class="mink mink-bold"/>
+            <polyline points="-22,-8 -14,0 -8,-6 0,4 8,-2 16,8" class="mbr mbr-bold"/>
+            <g transform="translate(-12,16)">
+              <line x1="-5" y1="-5" x2="5" y2="5" class="mbr mbr-bold"/>
+              <line x1="5" y1="-5" x2="-5" y2="5" class="mbr mbr-bold"/>
+            </g>
+          </g>
+          <text x="14" y="225" class="mlabel">02 &#9472;&#9472; INSPECTION</text>
+        </g>
+
+        <!-- frame 03 · punch list -->
+        <g transform="translate(610, 20)">
+          <rect x="0" y="0" width="270" height="240" class="mink mink-thin"/>
+          <g transform="translate(135, 120)">
+            <rect x="-72" y="-82" width="144" height="170" class="mink mink-bold" fill="#fbfaf4"/>
+            <rect x="-22" y="-93" width="44" height="14" class="mink mink-bold" fill="#f4f2ec"/>
+            <rect x="-12" y="-89" width="24" height="8" class="mink mink-thin"/>
+            <line x1="-58" y1="-62" x2="58" y2="-62" class="mink mink-reg"/>
+            <text x="-58" y="-66" class="mlabel" style="font-size: 8px; letter-spacing: 0.20em;">PUNCH LIST &#8212; AUDIT OUTPUT</text>
+            <rect x="-58" y="-48" width="11" height="11" class="mink mink-reg"/>
+            <line x1="-45" y1="-45" x2="58" y2="-45" class="mink mink-thin"/>
+            <line x1="-45" y1="-39" x2="40" y2="-39" class="mink mink-thin"/>
+            <polyline points="-55,-43 -52,-40 -48,-46" class="mbr mbr-bold"/>
+            <rect x="-58" y="-26" width="11" height="11" class="mink mink-reg"/>
+            <line x1="-45" y1="-23" x2="58" y2="-23" class="mink mink-thin"/>
+            <line x1="-45" y1="-17" x2="48" y2="-17" class="mink mink-thin"/>
+            <polyline points="-55,-21 -52,-18 -48,-24" class="mbr mbr-bold"/>
+            <rect x="-58" y="-4" width="11" height="11" class="mink mink-reg"/>
+            <line x1="-45" y1="-1" x2="58" y2="-1" class="mink mink-thin"/>
+            <line x1="-45" y1="5" x2="34" y2="5" class="mink mink-thin"/>
+            <polyline points="-55,1 -52,4 -48,-2" class="mbr mbr-bold"/>
+            <rect x="-58" y="18" width="11" height="11" class="mink mink-reg"/>
+            <line x1="-45" y1="21" x2="58" y2="21" class="mink mink-thin"/>
+            <line x1="-45" y1="27" x2="44" y2="27" class="mink mink-thin"/>
+            <circle cx="-52.5" cy="23.5" r="2.5" class="mbr-fill"/>
+            <rect x="-58" y="40" width="11" height="11" class="mink mink-reg"/>
+            <line x1="-45" y1="43" x2="58" y2="43" class="mink mink-thin"/>
+            <line x1="-45" y1="49" x2="38" y2="49" class="mink mink-thin"/>
+            <rect x="-58" y="62" width="11" height="11" class="mink mink-reg"/>
+            <line x1="-45" y1="65" x2="58" y2="65" class="mink mink-thin"/>
+            <line x1="-45" y1="71" x2="42" y2="71" class="mink mink-thin"/>
+          </g>
+          <text x="14" y="225" class="mlabel">03 &#9472;&#9472; PUNCH LIST</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="method-prose">
+      <p><span class="step-lead">01 ── Blueprint.</span> We start with a real scaffold &mdash; an app generated by the tool we're auditing, using the same onboarding flow you'd use. We anonymize it, commit it untouched as the baseline, and treat it as if a real founder had just shipped it.</p>
+      <p><span class="step-lead">02 ── Inspection.</span> We open it up &mdash; every secret, every authentication path, every API endpoint, every default config. We trace what would happen if someone hit each route from a browser, from a different user's session, with malformed data. We catalogue everything we find.</p>
+      <p><span class="step-lead">03 ── Punch list.</span> Every problem gets a patch. Every patch gets one command you can run to prove the patch worked. Then we name the tool-default pattern behind it &mdash; why this kind of mistake gets shipped by this kind of tool. That's how one anonymized audit turns into a tool-wide writeup.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     WHAT WE'VE FOUND SO FAR  ·  graceful empty state
+     ===================================================== -->
+<section>
+  <div class="wrap">
+    <div class="kicker"><span class="num">05</span><span class="bar">──</span> WHAT WE'VE FOUND SO FAR</div>
+    <h2>The first teardowns are in production.</h2>
+
+    <div class="found-grid">
+      <div class="prose">
+        <p>The audit queue starts with Lovable &mdash; the third-party scan above puts the most-attested default failure at roughly seven of ten apps. The shape of the broader problem is what this project will document: <em>each tool's onboarding wizard ships a specific set of defaults that quietly break in production, and those defaults are knowable by tool.</em></p>
+        <p>When the first teardown lands, the hub documents each finding with its patch and its one-line verify command. The numbers below fill in as audits ship; the empty rows hold their shape rather than disappear.</p>
+      </div>
+
+      <div class="col-stats">
+        <!-- stat 01 · TODO placeholder · graceful empty (matches design's carry-text-during-empty-state pattern) -->
+        <div class="stat">
+          <div class="stat-num empty">&mdash;</div>
+          <div class="stat-body">findings across the first teardown. Severity counts fill in when teardown 01 publishes; the hub's index will surface the breakdown.</div>
+          <!-- TODO: operator — replace stat-num with the first teardown's total finding count once published; replace stat-body with the actual severity distribution -->
+          <div class="stat-attribution todo">First-teardown count fills in when teardown 01 lands</div>
+        </div>
+
+        <!-- stat 02 · TODO placeholder · graceful empty -->
+        <div class="stat">
+          <div class="stat-num empty">&mdash;</div>
+          <div class="stat-body">total findings across all five teardowns &mdash; the cross-stack picture, once every audit has shipped.</div>
+          <!-- TODO: operator — replace stat-num with the cumulative total once teardowns 02–05 ship -->
+          <div class="stat-attribution todo">Cumulative count fills in as teardowns 02&ndash;05 ship</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     FOOTER · minimal
+     ===================================================== -->
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-inner">
+      <div>
+        <div class="foot-brand"><span class="slash">/</span>vibe-code-audits</div>
+        <div class="foot-tag">Named-stack teardowns of AI-generated code &middot; MIT &middot; v1.0 &middot; 2026</div>
+      </div>
+      <div class="foot-links">
+        <a href="index.html">Open the hub</a>
+        <a href="https://github.com/&lt;handle&gt;/vibe-code-audits">GitHub repo</a>
+        <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/LICENSE">MIT license</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
