@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>vibe-code-audits · teardown OG · {{STACK}}</title>
+<style>
+/* =================================================================
+   Per-teardown OG template (1200×630)
+   Visual identity: design-claude's postmortem-report lock 2026-05-18
+   Self-contained: system-stack fonts only, no external resource fetches.
+
+   Slot grammar (edit visible text directly, no template engine):
+     · TEARDOWN_NUM       — top meta strip, e.g. "01 / 2026-05"
+     · STACK              — lowercase, e.g. "lovable" / "v0" / "bolt.new" / "cursor" / "replit/agent"
+     · STACK_PRETTY       — title-cased for headline, e.g. "Lovable" / "v0" / "Bolt.new" / "Cursor" / "Replit Agent"
+     · HEADLINE_TOP       — first line of headline ("10 things")
+     · HEADLINE_BOTTOM    — second line of headline ("ships broken.")
+     · SEV_CRIT / HIGH / MED / LOW — finding counts per severity tier (must sum to total findings)
+     · VERDICT            — short verdict word/phrase per teardown. Use class="value red" only for verdicts marking
+                             definitive failure (e.g. "SHIPS BROKEN" only when audit confirms CRITICAL-class findings)
+     · PUBLISHED_YYYY_MM  — month of teardown publication
+
+   This file as-checked-in carries placeholder text in every slot.
+   Each per-teardown render edits the slots inline and uses render.sh
+   to produce docs/og-teardown-NN-<stack>.png.
+   ================================================================= */
+:root {
+  --bg: #f4f2ec;
+  --ink: #0f1b2d;
+  --muted: #5b6878;
+  --rule: #d6d2c4;
+  --critical: #c0362c;
+  --high: #d2841f;
+  --med: #a48a1f;
+  --low: #547690;
+  --sans: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1200px; height: 630px; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+.og {
+  width: 1200px; height: 630px;
+  padding: 56px 72px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative;
+}
+
+.col-markers { position: absolute; top: 0; bottom: 0; left: 72px; right: 72px; pointer-events: none; }
+.col-markers span { position: absolute; top: 40px; bottom: 40px; width: 1px; background: var(--rule); opacity: 0.55; }
+
+/* top meta strip: TEARDOWN # / STACK / VERDICT */
+.metastrip {
+  display: flex;
+  gap: 40px;
+  font-family: var(--mono);
+  font-size: 16px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  flex-wrap: wrap;
+}
+.metastrip .cell { display: flex; flex-direction: column; gap: 4px; }
+.metastrip .label { color: var(--muted); font-size: 13px; font-weight: 500; }
+.metastrip .value { color: var(--ink); font-weight: 700; font-size: 19px; letter-spacing: 0.08em; }
+.metastrip .value.red { color: var(--critical); }
+.metastrip .value.placeholder { color: var(--muted); font-style: italic; font-weight: 500; font-size: 17px; }
+
+/* center: headline */
+.headblock { position: relative; }
+.headline {
+  font-weight: 700;
+  font-size: 84px;
+  line-height: 1.02;
+  letter-spacing: -0.024em;
+  color: var(--ink);
+  max-width: 980px;
+}
+.headline .red { color: var(--critical); }
+.headline .stack-mono { font-family: var(--mono); font-weight: 700; letter-spacing: -0.01em; }
+.headline.placeholder { color: var(--muted); font-size: 60px; line-height: 1.1; font-weight: 500; max-width: 960px; }
+
+/* severity breakdown bar */
+.sevbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 32px;
+  font-family: var(--mono);
+  font-size: 17px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.sevbar .label { color: var(--muted); font-size: 13px; font-weight: 500; margin-right: 4px; }
+.sevbar .group { display: inline-flex; align-items: center; gap: 10px; }
+.sevbar .blk { display: inline-block; width: 22px; height: 22px; }
+.sevbar .count { font-weight: 700; font-size: 21px; }
+.sevbar .blk.crit { background: var(--critical); }
+.sevbar .blk.high { background: var(--high); }
+.sevbar .blk.med  { background: var(--med); }
+.sevbar .blk.low  { background: var(--low); }
+.sevbar.placeholder .count { color: var(--muted); font-style: italic; font-weight: 500; }
+.sevbar.placeholder .blk { opacity: 0.35; }
+
+/* bottom foot */
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-family: var(--mono);
+  font-size: 16px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.foot .brand { color: var(--ink); font-weight: 700; font-size: 17px; }
+</style>
+</head>
+<body>
+<div class="og">
+  <div class="col-markers">
+    <span style="left: 0%;"></span>
+    <span style="left: 33%;"></span>
+    <span style="left: 58%;"></span>
+    <span style="left: 92%;"></span>
+  </div>
+
+  <!-- TOP META STRIP — slots: TEARDOWN_NUM · STACK · VERDICT
+       Edit text directly. For real teardown publication, swap class="value placeholder" → class="value"
+       and replace the bracketed text. Use class="value red" only for verdicts marking definitive failure
+       (e.g. "SHIPS BROKEN" only when audit confirms CRITICAL-class findings).
+  -->
+  <div class="metastrip">
+    <div class="cell">
+      <span class="label">Teardown</span>
+      <span class="value placeholder">[TEARDOWN_NUM / YYYY-MM]</span>
+    </div>
+    <div class="cell">
+      <span class="label">Stack</span>
+      <span class="value placeholder">[stack]</span>
+    </div>
+    <div class="cell">
+      <span class="label">Verdict</span>
+      <span class="value placeholder">[VERDICT — fill at publish]</span>
+    </div>
+  </div>
+
+  <!-- HEADLINE — slots: HEADLINE_TOP · STACK_PRETTY · HEADLINE_BOTTOM
+       Pattern: "[Finding count] things [Stack_pretty] ships broken." for SHIPS-BROKEN verdicts.
+       Adjust per teardown findings. Keep one .red word per headline maximum.
+       Strip class="placeholder" from the .headline div once filled.
+  -->
+  <div class="headblock">
+    <div class="headline placeholder">[HEADLINE — fill at publish, e.g.<br>"N things STACK ships broken."]</div>
+
+    <!-- SEVERITY BREAKDOWN — slots: SEV_CRIT · SEV_HIGH · SEV_MED · SEV_LOW
+         Numbers match the teardown's actual finding counts.
+         Strip class="placeholder" from the .sevbar div once filled with real counts.
+    -->
+    <div class="sevbar placeholder">
+      <span class="label">Severity</span>
+      <span class="group"><span class="blk crit"></span><span class="count">&mdash;</span></span>
+      <span class="group"><span class="blk high"></span><span class="count">&mdash;</span></span>
+      <span class="group"><span class="blk med"></span><span class="count">&mdash;</span></span>
+      <span class="group"><span class="blk low"></span><span class="count">&mdash;</span></span>
+    </div>
+  </div>
+
+  <!-- FOOT: published date + repo URL — slot: PUBLISHED_YYYY_MM -->
+  <div class="foot">
+    <span>[Published YYYY-MM] &middot; Six-step audit protocol</span>
+    <span class="brand">github.com/&lt;handle&gt;/vibe-code-audits</span>
+  </div>
+</div>
+</body>
+</html>

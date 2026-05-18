@@ -1,0 +1,61 @@
+# Bolt.new — default failure patterns
+
+**Stack:** Bolt.new (StackBlitz)
+**What this stack is:** In-browser full-stack scaffolder that runs an entire dev environment (Node, package install, preview) inside the browser via WebContainers.
+
+**Status of this pattern file:** scaffolded. Pattern claims fill in as teardowns accumulate.
+
+<!-- TODO: auditor — fill Pattern 1/2/3+ once N=3+ teardowns of Bolt.new apps independently confirm each pattern. Until then, leave placeholders. A pattern file with empty slots is correct; a pattern file with invented patterns is worse than empty. -->
+
+---
+
+## What Bolt.new does well
+
+<!-- TODO: auditor — list the 2-3 things Bolt.new reliably gets right. This section matters: it prevents the library from reading as a hit-piece, and helps the specialist give balanced briefs. Fill once N=3+ teardowns let you generalize. -->
+
+_(awaits teardown-grounded fill)_
+
+---
+
+## Pattern catalogue
+
+Each pattern below is a **placeholder**. A pattern only gets a real entry when N=3+ independent teardowns of Bolt.new apps have confirmed the same root cause. Pattern claims without N=3+ evidence are not added to this file; they live in individual teardowns until the threshold is met.
+
+### Pattern 1 — _(awaits teardown-grounded fill)_
+
+- **Severity (typical):** TBD
+- **Root cause:** _(awaits fill)_
+- **What Bolt.new actually generates:** _(awaits fill — anonymized excerpt or pattern description)_
+- **Why it fails:** _(awaits fill — the misconception or default that produces the failure)_
+- **Fix-pattern shape:** _(awaits fill — the structural change that addresses the root cause, not a specific code patch)_
+- **Evidence (teardown IDs):** _(awaits fill — list of TD-IDs grounding the pattern)_
+
+### Pattern 2 — _(awaits teardown-grounded fill)_
+
+_(same structure as Pattern 1)_
+
+### Pattern 3 — _(awaits teardown-grounded fill)_
+
+_(same structure)_
+
+<!-- Auditors: add Pattern 4, 5, N as they reach the N=3 evidence threshold. Resist the urge to pre-name patterns from theoretical guides (OWASP / NIST etc.). This file is empirical. -->
+
+---
+
+## Evidence — teardowns currently grounding any claim in this file
+
+<!-- TODO: auditor — list teardowns of Bolt.new apps in chronological audit order. Each entry: TD-ID, audit date, app type (anonymized), severity-CRITICAL/HIGH finding count. -->
+
+_(no teardowns of Bolt.new apps in the library yet)_
+
+---
+
+## Cross-references
+
+- Cross-stack patterns that also show up in Bolt.new apps: see [`cross-stack-failures.md`](cross-stack-failures.md)
+- Methodology used to produce Bolt.new teardowns: see [`../methodology/how-we-audit.md`](../methodology/how-we-audit.md)
+- Severity rubric applied to Bolt.new findings: see [`../methodology/severity-rubric.md`](../methodology/severity-rubric.md)
+
+---
+
+_Last updated: 2026-05-18 (initial scaffold by specialist-builder; awaits teardown-grounded fill)._

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Vibe-Code Audits &mdash; Named-Stack Teardowns of AI-Generated Code</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Empirical audits of real outputs from Lovable, v0, Bolt.new, Cursor, and Replit Agent. The specialist navigates the case files and generates pre-flight checklists; the library tells builders what to look for. Free, MIT, growing." />
+<meta property="og:title" content="The defaults vibe-coding ships broken." />
+<meta property="og:description" content="Named-stack teardowns of real outputs from Lovable, v0, Bolt.new, Cursor, and Replit Agent. Specialist runs in your Claude Project. Free, MIT, growing." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://nftyoginis.github.io/vibe-code-audits/" />
+<meta property="og:image" content="https://nftyoginis.github.io/vibe-code-audits/og-image.png" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" content="The defaults vibe-coding ships broken." />
+<meta property="twitter:description" content="Named-stack teardowns of real outputs from Lovable, v0, Bolt.new, Cursor, and Replit Agent. Specialist runs in your Claude Project. Free, MIT, growing." />
+<meta property="twitter:image" content="https://nftyoginis.github.io/vibe-code-audits/og-image.png" />
+<style>
+/* =================================================================
+   Vibe-Code Audits — docs/index.html
+   Visual identity: Postmortem report (lock 2026-05-18, design-claude)
+   Self-contained: system-stack fonts only, no external resource fetches.
+   ================================================================= */
+:root {
+  --bg: #f4f2ec;
+  --ink: #0f1b2d;
+  --muted: #5b6878;
+  --rule: #d6d2c4;
+  --rule-strong: #b8b3a1;
+  --critical: #c0362c;
+  --high: #d2841f;
+  --med: #a48a1f;
+  --low: #547690;
+  --code-bg: #11192a;
+  --code-ink: #e8e4d8;
+  --code-muted: #8d99ad;
+  --diff-add: #6fb78a;
+  --diff-del: #d57676;
+  --sans: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--critical); }
+code { font-family: var(--mono); font-size: 0.92em; background: rgba(15,27,45,0.06); padding: 1px 6px; }
+h1, h2, h3 { font-weight: 700; line-height: 1.08; letter-spacing: -0.022em; color: var(--ink); }
+h2 { font-size: 40px; line-height: 1.12; letter-spacing: -0.012em; margin-bottom: 16px; font-weight: 600; }
+h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.008em; margin-bottom: 12px; }
+p { margin-bottom: 16px; max-width: 760px; }
+ul, ol { margin: 16px 0 20px 24px; }
+li { margin-bottom: 6px; max-width: 720px; }
+
+/* sticky nav */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(244,242,236,0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-inner { max-width: 1280px; margin: 0 auto; padding: 18px 64px; display: flex; justify-content: space-between; align-items: center; gap: 32px; }
+.nav-brand { font-family: var(--mono); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; text-decoration: none; }
+.nav-brand .slash { color: var(--critical); }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { font-family: var(--mono); font-size: 12px; letter-spacing: 0.10em; text-transform: uppercase; text-decoration: none; color: var(--muted); }
+.nav-links a:hover { color: var(--ink); }
+.nav-cta { font-family: var(--mono); font-size: 12px; letter-spacing: 0.10em; text-transform: uppercase; text-decoration: none; padding: 9px 16px; border: 1px solid var(--ink); color: var(--ink); }
+.nav-cta:hover { background: var(--ink); color: var(--bg); }
+
+/* layout */
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 64px; }
+section { padding: 96px 0; border-top: 1px solid var(--rule); }
+section:first-of-type { border-top: 0; }
+.kicker { font-family: var(--mono); font-weight: 500; font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); margin-bottom: 24px; }
+.kicker .num { color: var(--ink); margin-right: 4px; font-weight: 700; }
+.kicker .num--crit { color: var(--critical); }
+.kicker .bar { color: var(--rule-strong); margin: 0 8px; }
+.lede { font-size: 19px; line-height: 1.55; color: var(--muted); max-width: 720px; }
+.body-em { font-weight: 600; color: var(--ink); }
+
+/* hero */
+.hero { padding: 96px 0 80px; position: relative; }
+.hero .col-markers { position: absolute; top: 0; bottom: 0; left: 0; right: 0; pointer-events: none; }
+.hero .col-markers span { position: absolute; top: 32px; bottom: 32px; width: 1px; background: var(--rule); opacity: 0.6; }
+.hero h1 { font-size: 88px; line-height: 1.02; letter-spacing: -0.024em; font-weight: 700; max-width: 980px; position: relative; }
+.hero h1 .red { color: var(--critical); }
+.hero .stand { margin-top: 32px; max-width: 720px; font-size: 23px; color: var(--muted); line-height: 1.45; position: relative; }
+.hero .meta-strip { display: flex; gap: 40px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); flex-wrap: wrap; }
+.hero .meta-strip strong { color: var(--ink); font-weight: 700; margin-right: 8px; font-size: 14px; }
+.hero .meta-strip .pending { color: var(--rule-strong); font-style: normal; }
+.hero .hero-ctas { display: flex; gap: 16px; margin-top: 40px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 22px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.10em; text-transform: uppercase; text-decoration: none; }
+.btn--primary { background: var(--ink); color: var(--bg); border: 1px solid var(--ink); }
+.btn--primary:hover { background: var(--critical); border-color: var(--critical); }
+.btn--ghost { border: 1px solid var(--ink); color: var(--ink); }
+.btn--ghost:hover { background: var(--ink); color: var(--bg); }
+
+/* severity badge */
+.sev { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); }
+.sev .block { display: inline-block; width: 14px; height: 14px; flex-shrink: 0; }
+.sev--critical .block { background: var(--critical); }
+.sev--high .block { background: var(--high); }
+.sev--med .block { background: var(--med); }
+.sev--low .block { background: var(--low); }
+
+/* stack grid */
+.stack-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 48px; }
+.stack-card { background: var(--bg); padding: 36px 28px; min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; }
+.stack-kicker-label { font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.stack-name { font-family: var(--mono); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; color: var(--ink); margin: 18px 0 14px; }
+.stack-rule { height: 1px; background: var(--rule); margin-bottom: 18px; }
+.stack-summary { font-size: 14px; line-height: 1.5; color: var(--muted); margin-bottom: 18px; }
+.stack-meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--muted); }
+.stack-meta a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 1px; }
+.stack-meta a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+/* teardown index */
+.tear-index { margin-top: 40px; border-top: 1px solid var(--ink); }
+.tear-empty { padding: 64px 32px; text-align: center; border-bottom: 1px solid var(--rule); }
+.tear-empty-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--critical); margin-bottom: 18px; }
+.tear-empty-title { font-size: 26px; font-weight: 600; max-width: 680px; margin: 0 auto 18px; line-height: 1.25; }
+.tear-empty-body { font-size: 16px; color: var(--muted); max-width: 600px; margin: 0 auto; }
+
+/* jobs grid */
+.jobs { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.job { background: var(--bg); padding: 28px 28px; }
+.job-num { font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 0.16em; color: var(--critical); margin-bottom: 10px; }
+.job h3 { font-size: 20px; margin-bottom: 8px; }
+.job p { font-size: 15px; color: var(--muted); margin: 0; max-width: 540px; }
+.job code { font-size: 13px; }
+
+/* methodology — 6 steps */
+.method { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.step { background: var(--bg); padding: 32px 28px; }
+.step-num { font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 0.16em; color: var(--critical); margin-bottom: 10px; }
+.step h3 { font-size: 22px; margin-bottom: 8px; }
+.step p { font-size: 15px; color: var(--muted); margin: 0; max-width: 540px; }
+
+/* FAQ */
+.faq { margin-top: 40px; }
+.faq-item { padding: 28px 0; border-bottom: 1px solid var(--rule); }
+.faq-item:last-child { border-bottom: 0; }
+.faq-q { font-size: 22px; font-weight: 600; letter-spacing: -0.012em; margin-bottom: 10px; }
+.faq-q::before { content: 'Q · '; font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--critical); letter-spacing: 0.14em; margin-right: 4px; vertical-align: 4px; }
+.faq-a { font-size: 16px; color: var(--muted); max-width: 760px; }
+
+/* setup / quickstart */
+.setup-steps { margin-top: 24px; display: grid; gap: 16px; }
+.setup-step { display: grid; grid-template-columns: 40px 1fr; gap: 18px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.setup-step:last-child { border-bottom: 0; }
+.setup-step .n { font-family: var(--mono); font-weight: 700; font-size: 13px; color: var(--critical); letter-spacing: 0.14em; padding-top: 2px; }
+.setup-step .body strong { font-size: 16px; color: var(--ink); display: block; margin-bottom: 6px; }
+.setup-step .body p { font-size: 14px; color: var(--muted); margin: 0; }
+.setup-step .body code { font-size: 13px; }
+
+/* footer */
+footer.site-foot { padding: 80px 0 96px; border-top: 1px solid var(--rule); }
+footer.site-foot .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+footer.site-foot .foot-brand { font-family: var(--mono); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+footer.site-foot .foot-brand .slash { color: var(--critical); }
+footer.site-foot .foot-tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+footer.site-foot h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); font-weight: 700; margin-bottom: 14px; }
+footer.site-foot ul { list-style: none; margin: 0; padding: 0; }
+footer.site-foot ul li { margin-bottom: 8px; }
+footer.site-foot ul li a { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-decoration: none; color: var(--muted); }
+footer.site-foot ul li a:hover { color: var(--ink); }
+footer.site-foot .foot-rule { height: 1px; background: var(--rule); margin: 40px 0 20px; }
+footer.site-foot .foot-fine { font-family: var(--mono); font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
+
+/* responsive — mobile */
+@media (max-width: 900px) {
+  .wrap, .nav-inner { padding-left: 24px; padding-right: 24px; }
+  .nav-links { display: none; }
+  .hero { padding: 56px 0; }
+  .hero h1 { font-size: 48px; line-height: 1.05; }
+  .hero .stand { font-size: 18px; }
+  .stack-grid { grid-template-columns: 1fr 1fr; }
+  .stack-grid .stack-card:nth-child(5) { grid-column: 1 / -1; }
+  .method, .jobs { grid-template-columns: 1fr; }
+  footer.site-foot .foot-grid { grid-template-columns: 1fr 1fr; }
+  h2 { font-size: 28px; }
+  section { padding: 56px 0; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="nav-brand"><span class="slash">/</span>vibe-code-audits</a>
+    <div class="nav-links">
+      <a href="#teardowns">Teardowns</a>
+      <a href="#stacks">Stacks</a>
+      <a href="#methodology">Methodology</a>
+      <a href="#specialist">Specialist</a>
+      <a href="#setup">Setup</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a href="https://github.com/&lt;handle&gt;/vibe-code-audits" class="nav-cta">View on GitHub &rarr;</a>
+  </div>
+</nav>
+
+<div class="wrap" id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="col-markers">
+      <span style="left: 0%;"></span>
+      <span style="left: 33%;"></span>
+      <span style="left: 58%;"></span>
+      <span style="left: 92%;"></span>
+    </div>
+    <div class="kicker"><span class="num num--crit">00</span><span class="bar">&mdash;&mdash;</span> NAMED-STACK TEARDOWNS &middot; MIT &middot; FREE</div>
+    <h1>The defaults <span class="red">vibe-coding</span> ships broken.</h1>
+    <p class="stand">A growing library of human-audited teardowns of real outputs from Lovable, v0, Bolt.new, Cursor, and Replit Agent. The companion specialist runs in your Claude Project: it navigates the case files, generates pre-flight checklists, walks through severity grading. It does not audit your code. The first teardown is in production.</p>
+    <div class="hero-ctas">
+      <a href="#specialist" class="btn btn--primary">What the specialist does &rarr;</a>
+      <a href="https://github.com/&lt;handle&gt;/vibe-code-audits" class="btn btn--ghost">Source on GitHub</a>
+    </div>
+    <div class="meta-strip">
+      <div><strong>5</strong>stacks covered</div>
+      <div><strong class="pending">&mdash;</strong>teardowns live <!-- TODO: operator — replace with live count once first teardown is merged --></div>
+      <div><strong>12</strong>cross-stack patterns</div>
+      <div><strong>5</strong>specialist jobs</div>
+      <div><strong>MIT</strong>license</div>
+    </div>
+  </section>
+
+  <!-- STACKS -->
+  <section id="stacks">
+    <div class="kicker"><span class="num">02</span><span class="bar">&mdash;&mdash;</span> THE FIVE STACKS</div>
+    <h2>Five named vibe-coding tools. One library each.</h2>
+    <p class="lede">Each stack's pattern library is scaffolded with the structural template. Pattern claims fill in as teardowns accumulate &mdash; a pattern entry requires N=3+ independent teardowns of that stack confirming the same failure shape. Until that threshold is met, observations stay in the individual teardowns and the per-stack pattern files hold the scaffolded structure. Generic AI-audit checklists describe vulnerability classes; this library names tool-default patterns specific to the stack that produced them.</p>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div>
+          <div class="stack-kicker-label">Stack 01 &middot; Lovable.dev</div>
+          <div class="stack-name">lovable</div>
+          <div class="stack-rule"></div>
+          <p class="stack-summary">React + Supabase + Tailwind scaffolder. Browser-based, prompt-driven, full-stack output. Pattern library scaffolded; awaits teardown-grounded fill.</p>
+        </div>
+        <div class="stack-meta">
+          <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/lovable-default-failures.md">patterns/lovable&hellip; &rarr;</a>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div>
+          <div class="stack-kicker-label">Stack 02 &middot; Vercel</div>
+          <div class="stack-name">v0</div>
+          <div class="stack-rule"></div>
+          <p class="stack-summary">UI-first React + Next.js component generator. Server-action surface plus client component output. Pattern library scaffolded; awaits teardown-grounded fill.</p>
+        </div>
+        <div class="stack-meta">
+          <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/v0-default-failures.md">patterns/v0&hellip; &rarr;</a>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div>
+          <div class="stack-kicker-label">Stack 03 &middot; StackBlitz</div>
+          <div class="stack-name">bolt.new</div>
+          <div class="stack-rule"></div>
+          <p class="stack-summary">In-browser full-stack scaffolder via WebContainers. Preview-environment delta from production deploy. Pattern library scaffolded; awaits teardown-grounded fill.</p>
+        </div>
+        <div class="stack-meta">
+          <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/bolt-default-failures.md">patterns/bolt&hellip; &rarr;</a>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div>
+          <div class="stack-kicker-label">Stack 04 &middot; Anysphere</div>
+          <div class="stack-name">cursor</div>
+          <div class="stack-rule"></div>
+          <p class="stack-summary">Agentic Composer mode in the Cursor editor. Mixed human-edited and AI-generated codebase shape. Pattern library scaffolded; awaits teardown-grounded fill.</p>
+        </div>
+        <div class="stack-meta">
+          <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/cursor-default-failures.md">patterns/cursor&hellip; &rarr;</a>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div>
+          <div class="stack-kicker-label">Stack 05 &middot; Replit</div>
+          <div class="stack-name">replit/agent</div>
+          <div class="stack-rule"></div>
+          <p class="stack-summary">Cloud-hosted agentic builder in Replit. Hosted-deploy default configuration distinct from self-hosted. Pattern library scaffolded; awaits teardown-grounded fill.</p>
+        </div>
+        <div class="stack-meta">
+          <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/replit-default-failures.md">patterns/replit&hellip; &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="lede" style="margin-top: 36px;">Plus the cross-stack baseline: <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/cross-stack-failures.md">12 patterns observed across stacks</a> &mdash; a slim baseline so the specialist can cross-reference patterns that recur regardless of which tool generated the code.</p>
+  </section>
+
+  <!-- TEARDOWNS -->
+  <section id="teardowns">
+    <div class="kicker"><span class="num">03</span><span class="bar">&mdash;&mdash;</span> TEARDOWN INDEX</div>
+    <h2>Browse the case files.</h2>
+    <p class="lede">Each teardown follows the same structure: header (stack, audit date, app type), severity summary, findings (with rubric application), methodology adherence, consent + disclosure timeline. Template at <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/teardowns/_TEMPLATE.md">teardowns/_TEMPLATE.md</a>.</p>
+
+    <div class="tear-index">
+      <div class="tear-empty">
+        <div class="tear-empty-label">&middot; teardown index pending &middot;</div>
+        <div class="tear-empty-title">The first teardowns are in production. Lovable leads the queue.</div>
+        <p class="tear-empty-body">Empty is correct at scaffold time. Pattern claims require N=3+ teardowns per stack before they're added to the per-stack pattern files. When the first teardown lands, the row template is: <code>ID &middot; stack &middot; app type &middot; audit date &middot; highest severity &middot; findings count &middot; read &rarr;</code>.</p>
+        <!-- TODO: operator — replace this empty block with live teardown rows as they merge. Each row uses .tear-row markup; see git history for the canonical row shape. -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SPECIALIST -->
+  <section id="specialist">
+    <div class="kicker"><span class="num num--crit">04</span><span class="bar">&mdash;&mdash;</span> THE SPECIALIST &middot; 5 JOBS</div>
+    <h2>The repo is also a specialist. It navigates the case files.</h2>
+    <p class="lede">Load the repo into a Claude Project; the specialist holds the register of a trusted senior auditor and routes your request to one of five named jobs. The specialist <em class="body-em">does not audit your code</em>. The library tells builders what to look for; it doesn't look for them. That refusal is the differentiation moat against the saturated auto-auditor lane.</p>
+
+    <div class="jobs">
+      <div class="job">
+        <div class="job-num">JOB 01 &middot; brief</div>
+        <h3>Brief me on a stack</h3>
+        <p>Trigger phrase: <code>"Brief me on Lovable."</code> Output: ranked failure patterns from <code>patterns/&lt;stack&gt;-default-failures.md</code>, severity-tagged, with the first teardown to read.</p>
+      </div>
+      <div class="job">
+        <div class="job-num">JOB 02 &middot; walkthrough</div>
+        <h3>Walk me through a teardown</h3>
+        <p>Trigger phrase: <code>"Walk me through TD-LV-001."</code> Output: linear walkthrough mirroring the teardown's section order. Anonymized excerpts clarified; fix-pattern shapes surfaced.</p>
+      </div>
+      <div class="job">
+        <div class="job-num">JOB 03 &middot; severity</div>
+        <h3>Severity Q&amp;A</h3>
+        <p>Trigger phrase: <code>"Is this finding CRITICAL or HIGH?"</code> Output: the 5-question rubric applied to your scenario top-to-bottom, with verdict per <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/methodology/severity-rubric.md">methodology/severity-rubric.md</a>.</p>
+      </div>
+      <div class="job">
+        <div class="job-num">JOB 04 &middot; pre-flight</div>
+        <h3>Pre-flight checklist</h3>
+        <p>Trigger phrase: <code>"Give me a pre-flight for my Lovable SaaS."</code> Output: a personalized checklist with severity tags and "check yourself" vs. "hire someone" markers. Does <em class="body-em">not</em> run on your code.</p>
+      </div>
+      <div class="job">
+        <div class="job-num">JOB 05 &middot; methodology</div>
+        <h3>Methodology walkthrough</h3>
+        <p>Trigger phrase: <code>"How do you do these audits?"</code> Output: overview of the 6-step process, anonymization rules, severity rubric. You pick which document to deep-read.</p>
+      </div>
+      <div class="job" style="background: rgba(192,54,44,0.05);">
+        <div class="job-num" style="color: var(--ink);">REFUSALS</div>
+        <h3>Six refusal gates &mdash; load-bearing one is Gate 1</h3>
+        <p><strong>Gate 1: Never audit user code directly.</strong> If you paste your code, the specialist refuses with verbatim language and offers a pre-flight checklist instead. Gates 2&ndash;6 cover: never invent findings, never make legal/regulatory determinations, never name real apps, never claim AI replaces human audit, never pre-sell a paid service. Full text in <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/rules.md">rules.md</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <section id="methodology">
+    <div class="kicker"><span class="num">05</span><span class="bar">&mdash;&mdash;</span> METHODOLOGY</div>
+    <h2>Six steps. Same six every time.</h2>
+    <p class="lede">Every teardown follows the same audit protocol. The point isn't to be clever &mdash; the point is reproducibility. If you can repeat these six steps on your own scaffold, you can run the audit on your own code (or hand the methodology to someone you hire).</p>
+
+    <div class="method">
+      <div class="step">
+        <div class="step-num">01 &mdash;&mdash; INTAKE</div>
+        <h3>Intake the target</h3>
+        <p>Characterize the app before touching it: stack, data classes, auth shape, payment flow, third-party integrations. Time-box and scope agreed with the owner.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02 &mdash;&mdash; MAP</div>
+        <h3>Reachability map</h3>
+        <p>Enumerate the externally-reachable surface. Every route, every request type, what's exposed unauthenticated. The route table is the audit's spine.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03 &mdash;&mdash; SCAN</div>
+        <h3>Credential surface scan</h3>
+        <p>Find credentials reachable from the browser or otherwise leaked. Bundle grep, localStorage inspect, JWT decode. Service-role-key-in-client is the canonical finding.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04 &mdash;&mdash; ISOLATE</div>
+        <h3>Data-isolation check</h3>
+        <p>Confirm user A cannot read or write user B's data. Two test identities, direct API calls with mismatched IDs. The longest step on most audits.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">05 &mdash;&mdash; PROBE</div>
+        <h3>Input-handling check</h3>
+        <p>For every form / API input: injection payloads, missing/oversized/wrong-type input, rate-limit testing. Webhook signature + idempotency are separate checks.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">06 &mdash;&mdash; WRITE-UP</div>
+        <h3>Write up + anonymize</h3>
+        <p>Fill the teardown template. Anonymization gate before submission: a reader who knows the live app shouldn't recognize it from the teardown alone.</p>
+      </div>
+    </div>
+
+    <p class="lede" style="margin-top: 36px;">Full methodology at <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/methodology/how-we-audit.md">methodology/how-we-audit.md</a> &middot; anonymization + consent at <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/methodology/how-we-anonymize.md">methodology/how-we-anonymize.md</a> &middot; severity rubric at <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/methodology/severity-rubric.md">methodology/severity-rubric.md</a>.</p>
+  </section>
+
+  <!-- SETUP -->
+  <section id="setup">
+    <div class="kicker"><span class="num">06</span><span class="bar">&mdash;&mdash;</span> RUN THE SPECIALIST IN YOUR CLAUDE PROJECT</div>
+    <h2>Five steps. No install, no API key, no cost beyond your Claude subscription.</h2>
+    <p class="lede">The repo loads as-is into a Claude Project. The specialist reads <code>identity.md</code>, <code>rules.md</code>, <code>examples.md</code>, <code>welcome.md</code>, all <code>patterns/*.md</code>, all <code>teardowns/*.md</code>, all <code>methodology/*.md</code>.</p>
+
+    <div class="setup-steps">
+      <div class="setup-step">
+        <div class="n">01</div>
+        <div class="body">
+          <strong>Fork or clone the repo</strong>
+          <p><code>git clone https://github.com/&lt;handle&gt;/vibe-code-audits.git</code></p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="n">02</div>
+        <div class="body">
+          <strong>Open Claude &rarr; Projects &rarr; New Project</strong>
+          <p>Name it whatever fits. "Vibe Code Audit Navigator" is the canonical name.</p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="n">03</div>
+        <div class="body">
+          <strong>Upload the repo contents as project knowledge</strong>
+          <p>The full file set goes into the project. As new teardowns merge, pull from the upstream repo and re-upload to refresh.</p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="n">04</div>
+        <div class="body">
+          <strong>Paste identity.md into project instructions</strong>
+          <p>The field labeled "Custom instructions" or "Project instructions" depending on Claude version. This is what makes the specialist hold its register and routing-table behavior.</p>
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="n">05</div>
+        <div class="body">
+          <strong>Open a chat and ask one of the five jobs</strong>
+          <p>"Brief me on Lovable." "Give me a pre-flight checklist." "Walk me through the methodology." Full menu at <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/welcome.md">welcome.md</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="lede" style="margin-top: 36px;"><strong class="body-em">Want to run an audit on your own scaffold?</strong> The 6-step methodology above is reproducible by hand. The specialist won't run it on your code; you run it yourself, or you hand the methodology to someone you hire. Patches in teardowns are MIT-licensed &mdash; copy, adapt, ship.</p>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="kicker"><span class="num">07</span><span class="bar">&mdash;&mdash;</span> FAQ</div>
+    <h2>What this repo is and isn't.</h2>
+
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q">Can I paste my code and get a security review?</div>
+        <div class="faq-a">No. The library tells builders what to look for; it does not look for them. That's the differentiation moat. The specialist offers a pre-flight checklist (Job 4) for your stack instead &mdash; that's the on-scope alternative.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is this a paid audit service?</div>
+        <div class="faq-a">No. The repo is free, MIT-licensed, and intentionally non-commercial. <!-- TODO: Angle D activation — update this answer once paid layer launches. --></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is this a replacement for hiring an auditor?</div>
+        <div class="faq-a">No. Pattern recognition is upstream of an audit, not a substitute. The library tells you what categorical patterns to look for; confirming whether your specific app has those failures is human-audit work &mdash; yours, or someone you hire.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Why named stacks instead of a generic AI-audit checklist?</div>
+        <div class="faq-a">Generic checklists describe vulnerability classes &mdash; SQL injection, XSS, auth bypass. Named-stack teardowns describe tool-default patterns &mdash; "Lovable's onboarding wizard ships service-role connections client-side." Generic advice doesn't tell you where to look first. Named patterns do.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Will you take down a teardown if a stack patches the default?</div>
+        <div class="faq-a">No. The teardown updates to reflect the new default and adds a "patched on YYYY-MM-DD by &lt;stack&gt;" note. The original finding stays as historical context. Anyone running an older scaffold version still needs the patch.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Will you tell me if a specific real app is safe?</div>
+        <div class="faq-a">No. Teardowns are anonymized; live-product naming is out of scope. If you're worried about a specific real app you use, the pre-flight checklist for its stack will surface the categorical patterns to look for.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How do I contribute a teardown or report a new pattern?</div>
+        <div class="faq-a">Open an issue or PR on GitHub. The contribution flow is documented in <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>. Documented consent (Category A or B), methodology adherence, anonymization gate &mdash; same bar as internal teardowns.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Why MIT and not something more restrictive?</div>
+        <div class="faq-a">MIT is permissive enough. The patches and methodology should be reusable, attribution preserved, no warranty implied. If you fork it and ship it inside your own audit practice, that's the design.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Angle D placeholder -->
+  <section id="audit-cta">
+    <div class="kicker"><span class="num">08</span><span class="bar">&mdash;&mdash;</span> WANT YOURS AUDITED?</div>
+    <h2>The reproducible methodology is the answer.</h2>
+    <p class="lede">Right now there's no paid audit service to sell you. The 6-step methodology is what you'd run yourself, or hand to someone you hire. The library stays free under MIT regardless of what future layers launch.</p>
+    <!-- TODO: Angle D activation — paid-audit CTA block replaces the lede above once the trigger fires (≥3 teardowns + ≥100 stars + ≥1 unsolicited inbound). Until then, methodology is the answer. -->
+    <div class="hero-ctas" style="margin-top: 32px;">
+      <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/methodology/how-we-audit.md" class="btn btn--ghost">Read the methodology &rarr;</a>
+    </div>
+  </section>
+
+</div>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><span class="slash">/</span>vibe-code-audits</div>
+        <div class="foot-tag">Named-stack teardowns &middot; specialist navigator &middot; MIT &middot; 2026</div>
+      </div>
+      <div>
+        <h4>Library</h4>
+        <ul>
+          <li><a href="#teardowns">Teardowns</a></li>
+          <li><a href="#stacks">Stack patterns</a></li>
+          <li><a href="#methodology">Methodology</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Specialist</h4>
+        <ul>
+          <li><a href="#specialist">5 jobs</a></li>
+          <li><a href="#setup">Setup</a></li>
+          <li><a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/welcome.md">welcome.md</a></li>
+          <li><a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/rules.md">Refusal gates</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Source</h4>
+        <ul>
+          <li><a href="https://github.com/&lt;handle&gt;/vibe-code-audits">GitHub repo</a></li>
+          <li><a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/LICENSE">MIT license</a></li>
+          <li><a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/CONTRIBUTING.md">Contributing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-rule"></div>
+    <div class="foot-fine">
+      <span>&copy; 2026 &middot; MIT-licensed &middot; Use, fork, redistribute, build derivatives.</span>
+      <span class="red">By Gabe &mdash; Your AI Specialist</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
