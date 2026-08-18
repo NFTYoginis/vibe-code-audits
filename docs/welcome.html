@@ -673,7 +673,7 @@ strong { font-weight: 600; color: var(--ink); }
           <img src="icons/stack-lovable-256.svg" width="56" height="56" alt="Lovable wordmark in monospace" />
           <span class="name">lovable</span>
           <span class="underline"></span>
-          <span class="tag">awaits first teardown</span>
+          <span class="tag">1 teardown &middot; MED</span>
         </div>
         <div class="cell">
           <img src="icons/stack-v0-256.svg" width="56" height="56" alt="v0 wordmark in monospace" />
@@ -685,7 +685,7 @@ strong { font-weight: 600; color: var(--ink); }
           <img src="icons/stack-bolt-new-256.svg" width="56" height="56" alt="Bolt.new wordmark in monospace" />
           <span class="name">bolt.new</span>
           <span class="underline"></span>
-          <span class="tag">scheduled</span>
+          <span class="tag">1 teardown &middot; CRITICAL</span>
         </div>
         <div class="cell">
           <img src="icons/stack-cursor-256.svg" width="56" height="56" alt="Cursor wordmark in monospace" />
@@ -861,25 +861,23 @@ strong { font-weight: 600; color: var(--ink); }
 
     <div class="found-grid">
       <div class="prose">
-        <p>The audit queue starts with Lovable &mdash; the third-party scan above puts the most-attested default failure at roughly seven of ten apps. The shape of the broader problem is what this project will document: <em>each tool's onboarding wizard ships a specific set of defaults that quietly break in production, and those defaults are knowable by tool.</em></p>
-        <p>When the first teardown lands, the hub documents each finding with its patch and its one-line verify command. The numbers below fill in as audits ship; the empty rows hold their shape rather than disappear.</p>
+        <p>The audit queue started with Lovable &mdash; the third-party scan above puts the most-attested default failure at roughly seven of ten apps. The shape of the broader problem is what this project documents: <em>each tool's onboarding wizard ships a specific set of defaults that quietly break in production, and those defaults are knowable by tool.</em></p>
+        <p>Two teardowns are published so far, both audited 2026-05-19 and both self-cloned methodology validations rather than client work. The numbers below cover those two; three stacks remain scoped but unaudited.</p>
       </div>
 
       <div class="col-stats">
-        <!-- stat 01 · TODO placeholder · graceful empty (matches design's carry-text-during-empty-state pattern) -->
+        <!-- stat 01 · first teardown (Lovable habit-tracker), published 2026-05-19 -->
         <div class="stat">
-          <div class="stat-num empty">&mdash;</div>
-          <div class="stat-body">findings across the first teardown. Severity counts fill in when teardown 01 publishes; the hub's index will surface the breakdown.</div>
-          <!-- TODO: operator — replace stat-num with the first teardown's total finding count once published; replace stat-body with the actual severity distribution -->
-          <div class="stat-attribution todo">First-teardown count fills in when teardown 01 lands</div>
+          <div class="stat-num">3</div>
+          <div class="stat-body">findings in the first teardown &mdash; a Lovable habit-tracker: 1 MED, 2 LOW, no CRITICAL. Row-level security was correctly configured on every user-data table.</div>
+          <div class="stat-attribution">TD-LOVABLE-PLACEHOLDER-self-clone-habit &middot; audited 2026-05-19</div>
         </div>
 
-        <!-- stat 02 · TODO placeholder · graceful empty -->
+        <!-- stat 02 · cumulative across the 2 published teardowns of 5 scoped stacks -->
         <div class="stat">
-          <div class="stat-num empty">&mdash;</div>
-          <div class="stat-body">total findings across all five teardowns &mdash; the cross-stack picture, once every audit has shipped.</div>
-          <!-- TODO: operator — replace stat-num with the cumulative total once teardowns 02–05 ship -->
-          <div class="stat-attribution todo">Cumulative count fills in as teardowns 02&ndash;05 ship</div>
+          <div class="stat-num">7</div>
+          <div class="stat-body">findings across the two published teardowns &mdash; 2 CRITICAL, 2 MED, 3 LOW. Both CRITICALs sit in one Bolt.new app, on the UPDATE and DELETE verbs of a single table.</div>
+          <div class="stat-attribution">Covers 2 of the 5 scoped stacks; v0, Cursor and Replit Agent are unaudited</div>
         </div>
       </div>
     </div>
@@ -898,8 +896,8 @@ strong { font-weight: 600; color: var(--ink); }
       </div>
       <div class="foot-links">
         <a href="index.html">Open the hub</a>
-        <a href="https://github.com/&lt;handle&gt;/vibe-code-audits">GitHub repo</a>
-        <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/LICENSE">MIT license</a>
+        <a href="https://github.com/NFTYoginis/vibe-code-audits">GitHub repo</a>
+        <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/LICENSE">MIT license</a>
       </div>
     </div>
   </div>

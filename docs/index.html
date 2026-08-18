@@ -130,6 +130,16 @@ section:first-of-type { border-top: 0; }
 .tear-empty-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--critical); margin-bottom: 18px; }
 .tear-empty-title { font-size: 26px; font-weight: 600; max-width: 680px; margin: 0 auto 18px; line-height: 1.25; }
 .tear-empty-body { font-size: 16px; color: var(--muted); max-width: 600px; margin: 0 auto; }
+.tear-row { display: grid; grid-template-columns: 1fr auto; gap: 8px 24px; align-items: baseline; padding: 26px 4px; border-bottom: 1px solid var(--rule); }
+.tear-row-id { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--critical); grid-column: 1 / -1; margin-bottom: 2px; }
+.tear-row-title { font-size: 21px; font-weight: 600; letter-spacing: -0.01em; }
+.tear-row-meta { font-family: var(--mono); font-size: 13px; color: var(--muted); grid-column: 1 / -1; }
+.tear-row-meta .sev { font-weight: 700; }
+.tear-row-meta .sev--critical { color: var(--critical); }
+.tear-row-meta .sev--med { color: var(--med); }
+.tear-row-read { font-family: var(--mono); font-size: 13px; white-space: nowrap; }
+.tear-note { padding: 24px 4px; font-size: 15px; color: var(--muted); border-bottom: 1px solid var(--rule); }
+@media (max-width: 700px) { .tear-row { grid-template-columns: 1fr; } }
 
 /* jobs grid */
 .jobs { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
@@ -207,7 +217,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
       <a href="#setup">Setup</a>
       <a href="#faq">FAQ</a>
     </div>
-    <a href="https://github.com/&lt;handle&gt;/vibe-code-audits" class="nav-cta">View on GitHub &rarr;</a>
+    <a href="https://github.com/NFTYoginis/vibe-code-audits" class="nav-cta">View on GitHub &rarr;</a>
   </div>
 </nav>
 
@@ -230,14 +240,14 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
     </div>
     <div class="kicker"><span class="num num--crit">00</span><span class="bar">&mdash;&mdash;</span> NAMED-STACK TEARDOWNS &middot; MIT &middot; FREE</div>
     <h1>The defaults <span class="red">vibe-coding</span> ships broken.</h1>
-    <p class="stand">Five stacks scoped — Lovable, v0, Bolt.new, Cursor, Replit Agent — with human-audited teardowns of real outputs. The companion specialist runs in your Claude Project: it navigates the case files, generates pre-flight checklists, walks through severity grading. It does not audit your code. The first Lovable teardown is in production; index page pending teardown #2.</p>
+    <p class="stand">Five stacks scoped — Lovable, v0, Bolt.new, Cursor, Replit Agent — with human-audited teardowns of real outputs. The companion specialist runs in your Claude Project: it navigates the case files, generates pre-flight checklists, walks through severity grading. It does not audit your code. Two teardowns are published &mdash; a Lovable habit-tracker (MED) and a Bolt.new event manager (CRITICAL), both audited 2026-05-19. Three of the five stacks are scoped but not yet audited.</p>
     <div class="hero-ctas">
       <a href="#specialist" class="btn btn--primary">What the specialist does &rarr;</a>
-      <a href="https://github.com/&lt;handle&gt;/vibe-code-audits" class="btn btn--ghost">Source on GitHub</a>
+      <a href="https://github.com/NFTYoginis/vibe-code-audits" class="btn btn--ghost">Source on GitHub</a>
     </div>
     <div class="meta-strip">
       <div><strong>5</strong>stacks covered</div>
-      <div><strong class="pending">&mdash;</strong>teardowns live <!-- TODO: operator — replace with live count once first teardown is merged --></div>
+      <div><strong>2</strong>teardowns live</div>
       <div><strong>12</strong>cross-stack failure shapes</div>
       <div><strong>5</strong>specialist jobs</div>
       <div><strong>MIT</strong>license</div>
@@ -259,7 +269,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
           <p class="stack-summary">React + Supabase + Tailwind scaffolder. Browser-based, prompt-driven, full-stack output. Pattern library scaffolded; awaits teardown-grounded fill.</p>
         </div>
         <div class="stack-meta">
-          <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/lovable-default-failures.md">patterns/lovable&hellip; &rarr;</a>
+          <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/patterns/lovable-default-failures.md">patterns/lovable&hellip; &rarr;</a>
         </div>
       </div>
       <div class="stack-card">
@@ -270,7 +280,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
           <p class="stack-summary">UI-first React + Next.js component generator. Server-action surface plus client component output. Pattern library scaffolded; awaits teardown-grounded fill.</p>
         </div>
         <div class="stack-meta">
-          <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/v0-default-failures.md">patterns/v0&hellip; &rarr;</a>
+          <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/patterns/v0-default-failures.md">patterns/v0&hellip; &rarr;</a>
         </div>
       </div>
       <div class="stack-card">
@@ -281,7 +291,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
           <p class="stack-summary">In-browser full-stack scaffolder via WebContainers. Preview-environment delta from production deploy. Pattern library scaffolded; awaits teardown-grounded fill.</p>
         </div>
         <div class="stack-meta">
-          <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/bolt-default-failures.md">patterns/bolt&hellip; &rarr;</a>
+          <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/patterns/bolt-default-failures.md">patterns/bolt&hellip; &rarr;</a>
         </div>
       </div>
       <div class="stack-card">
@@ -292,7 +302,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
           <p class="stack-summary">Agentic Composer mode in the Cursor editor. Mixed human-edited and AI-generated codebase shape. Pattern library scaffolded; awaits teardown-grounded fill.</p>
         </div>
         <div class="stack-meta">
-          <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/cursor-default-failures.md">patterns/cursor&hellip; &rarr;</a>
+          <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/patterns/cursor-default-failures.md">patterns/cursor&hellip; &rarr;</a>
         </div>
       </div>
       <div class="stack-card">
@@ -303,27 +313,35 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
           <p class="stack-summary">Cloud-hosted agentic builder in Replit. Hosted-deploy default configuration distinct from self-hosted. Pattern library scaffolded; awaits teardown-grounded fill.</p>
         </div>
         <div class="stack-meta">
-          <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/replit-default-failures.md">patterns/replit&hellip; &rarr;</a>
+          <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/patterns/replit-default-failures.md">patterns/replit&hellip; &rarr;</a>
         </div>
       </div>
     </div>
 
-    <p class="lede" style="margin-top: 36px;">Plus the cross-stack baseline: <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/patterns/cross-stack-failures.md">12 patterns observed across stacks</a> &mdash; a slim baseline so the specialist can cross-reference patterns that recur regardless of which tool generated the code.</p>
+    <p class="lede" style="margin-top: 36px;">Plus the cross-stack baseline: <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/patterns/cross-stack-failures.md">12 patterns observed across stacks</a> &mdash; a slim baseline so the specialist can cross-reference patterns that recur regardless of which tool generated the code.</p>
   </section>
 
   <!-- TEARDOWNS -->
   <section id="teardowns">
     <div class="kicker"><span class="num">03</span><span class="bar">&mdash;&mdash;</span> TEARDOWN INDEX</div>
     <h2>Browse the case files.</h2>
-    <p class="lede">Each teardown follows the same structure: header (stack, audit date, app type), severity summary, findings (with rubric application), methodology adherence, consent + disclosure timeline. Template at <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/teardowns/_TEMPLATE.md">teardowns/_TEMPLATE.md</a>.</p>
+    <p class="lede">Each teardown follows the same structure: header (stack, audit date, app type), severity summary, findings (with rubric application), methodology adherence, consent + disclosure timeline. Template at <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/teardowns/_TEMPLATE.md">teardowns/_TEMPLATE.md</a>.</p>
 
     <div class="tear-index">
-      <div class="tear-empty">
-        <div class="tear-empty-label">&middot; teardown index pending &middot;</div>
-        <div class="tear-empty-title">The first teardowns are in production. Lovable leads the queue.</div>
-        <p class="tear-empty-body">Empty is correct at scaffold time. Pattern claims require N=3+ teardowns per stack before they're added to the per-stack pattern files. When the first teardown lands, the row template is: <code>ID &middot; stack &middot; app type &middot; audit date &middot; highest severity &middot; findings count &middot; read &rarr;</code>.</p>
-        <!-- TODO: operator — replace this empty block with live teardown rows as they merge. Each row uses .tear-row markup; see git history for the canonical row shape. -->
+      <div class="tear-row">
+        <div class="tear-row-id">TD-LOVABLE-PLACEHOLDER-self-clone-habit</div>
+        <div class="tear-row-title">Habit-tracker scaffold &mdash; Lovable + Supabase</div>
+        <a class="tear-row-read" href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/teardowns/TD-LOVABLE-PLACEHOLDER-self-clone-habit.md">read &rarr;</a>
+        <div class="tear-row-meta">audited 2026-05-19 &middot; highest severity <span class="sev sev--med">MED</span> &middot; 3 findings (1 MED, 2 LOW) &middot; RLS correctly configured on every user-data table</div>
       </div>
+      <div class="tear-row">
+        <div class="tear-row-id">TD-BOLT-PLACEHOLDER-event-mgr</div>
+        <div class="tear-row-title">Event-management SaaS scaffold &mdash; Bolt.new + Supabase</div>
+        <a class="tear-row-read" href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/teardowns/TD-BOLT-PLACEHOLDER-event-mgr.md">read &rarr;</a>
+        <div class="tear-row-meta">audited 2026-05-19 &middot; highest severity <span class="sev sev--critical">CRITICAL</span> &middot; 4 findings (2 CRITICAL, 1 MED, 1 LOW) &middot; partial RLS &mdash; anon role could UPDATE and DELETE any row</div>
+      </div>
+      <p class="tear-note">Both audits are self-cloned methodology validations by the repo author, not third-party client work. Three stacks &mdash; v0, Cursor, Replit Agent &mdash; are scoped but not yet audited. Per-stack pattern claims require N=3+ teardowns of that stack, so the per-stack pattern files remain scaffolded.</p>
+      <!-- TODO: maintainer — teardown IDs above are the placeholder IDs carried in the files themselves; both documents state that a final TD-<STACK>-<NNN> is assigned at merge. That assignment is still outstanding. -->
     </div>
   </section>
 
@@ -347,7 +365,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
       <div class="job">
         <div class="job-num">JOB 03 &middot; severity</div>
         <h3>Severity Q&amp;A</h3>
-        <p>Trigger phrase: <code>"Is this finding CRITICAL or HIGH?"</code> Output: the 5-question rubric applied to your scenario top-to-bottom, with verdict per <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/methodology/severity-rubric.md">methodology/severity-rubric.md</a>.</p>
+        <p>Trigger phrase: <code>"Is this finding CRITICAL or HIGH?"</code> Output: the 5-question rubric applied to your scenario top-to-bottom, with verdict per <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/methodology/severity-rubric.md">methodology/severity-rubric.md</a>.</p>
       </div>
       <div class="job">
         <div class="job-num">JOB 04 &middot; pre-flight</div>
@@ -362,7 +380,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
       <div class="job" style="background: rgba(192,54,44,0.05);">
         <div class="job-num" style="color: var(--ink);">REFUSALS</div>
         <h3>Six refusal gates &mdash; load-bearing one is Gate 1</h3>
-        <p><strong>Gate 1: Never audit user code directly.</strong> If you paste your code, the specialist refuses with verbatim language and offers a pre-flight checklist instead. Gates 2&ndash;6 cover: never invent findings, never make legal/regulatory determinations, never name real apps, never claim AI replaces human audit, never pre-sell a paid service. Full text in <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/rules.md">rules.md</a>.</p>
+        <p><strong>Gate 1: Never audit user code directly.</strong> If you paste your code, the specialist refuses with verbatim language and offers a pre-flight checklist instead. Gates 2&ndash;6 cover: never invent findings, never make legal/regulatory determinations, never name real apps, never claim AI replaces human audit, never pre-sell a paid service. Full text in <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/rules.md">rules.md</a>.</p>
       </div>
     </div>
   </section>
@@ -406,7 +424,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
       </div>
     </div>
 
-    <p class="lede" style="margin-top: 36px;">Full methodology at <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/methodology/how-we-audit.md">methodology/how-we-audit.md</a> &middot; anonymization + consent at <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/methodology/how-we-anonymize.md">methodology/how-we-anonymize.md</a> &middot; severity rubric at <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/methodology/severity-rubric.md">methodology/severity-rubric.md</a>.</p>
+    <p class="lede" style="margin-top: 36px;">Full methodology at <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/methodology/how-we-audit.md">methodology/how-we-audit.md</a> &middot; anonymization + consent at <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/methodology/how-we-anonymize.md">methodology/how-we-anonymize.md</a> &middot; severity rubric at <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/methodology/severity-rubric.md">methodology/severity-rubric.md</a>.</p>
   </section>
 
   <!-- SETUP -->
@@ -420,7 +438,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
         <div class="n">01</div>
         <div class="body">
           <strong>Fork or clone the repo</strong>
-          <p><code>git clone https://github.com/&lt;handle&gt;/vibe-code-audits.git</code></p>
+          <p><code>git clone https://github.com/NFTYoginis/vibe-code-audits.git</code></p>
         </div>
       </div>
       <div class="setup-step">
@@ -448,7 +466,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
         <div class="n">05</div>
         <div class="body">
           <strong>Open a chat and ask one of the five jobs</strong>
-          <p>"Brief me on Lovable." "Give me a pre-flight checklist." "Walk me through the methodology." Full menu at <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/welcome.md">welcome.md</a>.</p>
+          <p>"Brief me on Lovable." "Give me a pre-flight checklist." "Walk me through the methodology." Full menu at <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/welcome.md">welcome.md</a>.</p>
         </div>
       </div>
     </div>
@@ -488,7 +506,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
       </div>
       <div class="faq-item">
         <div class="faq-q">How do I contribute a teardown or report a new pattern?</div>
-        <div class="faq-a">Open an issue or PR on GitHub. The contribution flow is documented in <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>. Documented consent (Category A or B), methodology adherence, anonymization gate &mdash; same bar as internal teardowns.</div>
+        <div class="faq-a">Open an issue or PR on GitHub. The contribution flow is documented in <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>. Documented consent (Category A or B), methodology adherence, anonymization gate &mdash; same bar as internal teardowns.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">Why MIT and not something more restrictive?</div>
@@ -504,7 +522,7 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
     <p class="lede">Right now there's no paid audit service to sell you. The 6-step methodology is what you'd run yourself, or hand to someone you hire. The library stays free under MIT regardless of what future layers launch.</p>
     <!-- TODO: Angle D activation — paid-audit CTA block replaces the lede above once the trigger fires (≥3 teardowns + ≥100 stars + ≥1 unsolicited inbound). Until then, methodology is the answer. -->
     <div class="hero-ctas" style="margin-top: 32px;">
-      <a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/methodology/how-we-audit.md" class="btn btn--ghost">Read the methodology &rarr;</a>
+      <a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/methodology/how-we-audit.md" class="btn btn--ghost">Read the methodology &rarr;</a>
     </div>
   </section>
 
@@ -531,16 +549,16 @@ footer.site-foot .foot-fine .red { color: var(--critical); font-weight: 700; }
         <ul>
           <li><a href="#specialist">5 jobs</a></li>
           <li><a href="#setup">Setup</a></li>
-          <li><a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/welcome.md">welcome.md</a></li>
-          <li><a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/rules.md">Refusal gates</a></li>
+          <li><a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/welcome.md">welcome.md</a></li>
+          <li><a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/rules.md">Refusal gates</a></li>
         </ul>
       </div>
       <div>
         <h4>Source</h4>
         <ul>
-          <li><a href="https://github.com/&lt;handle&gt;/vibe-code-audits">GitHub repo</a></li>
-          <li><a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/LICENSE">MIT license</a></li>
-          <li><a href="https://github.com/&lt;handle&gt;/vibe-code-audits/blob/main/CONTRIBUTING.md">Contributing</a></li>
+          <li><a href="https://github.com/NFTYoginis/vibe-code-audits">GitHub repo</a></li>
+          <li><a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/LICENSE">MIT license</a></li>
+          <li><a href="https://github.com/NFTYoginis/vibe-code-audits/blob/main/CONTRIBUTING.md">Contributing</a></li>
         </ul>
       </div>
     </div>
